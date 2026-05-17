@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "627802907244",
+    "project_id": "bidndrive-65be3",
+    "storage_bucket": "bidndrive-65be3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:627802907244:android:4816883badf65a3f936e49",
+        "android_client_info": {
+          "package_name": "com.example.bid_drivng_cj_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGNOFZZixqftQQKIO5wrt7Iplb8fbhmMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:627802907244:android:b83fc8fb1412ef16936e49",
+        "android_client_info": {
+          "package_name": "com.techco.bidndriver_partners_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGNOFZZixqftQQKIO5wrt7Iplb8fbhmMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:627802907244:android:8730cbe56efdcd7e936e49",
+        "android_client_info": {
+          "package_name": "com.user.bidndrive"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGNOFZZixqftQQKIO5wrt7Iplb8fbhmMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
