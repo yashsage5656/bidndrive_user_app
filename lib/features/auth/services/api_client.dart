@@ -23,7 +23,43 @@ class ApiClient {
   final AuthLocalStorage _storage;
 
   Future<UserSession?>? _refreshFuture;
+  Future<http.StreamedResponse> putMultipart(
+      String path, {
+        required Map<String, String> fields,
+        Uint8List? fileBytes,
+        String? fileField,
+        String? fileName,
+      }) async {
+    final uri = ApiConstants.uri(path);
 
+    final request = http.MultipartRequest(
+      'PUT',
+      uri,
+    );
+
+    final headers = await _authorizedHeaders(fields
+
+    );
+
+    request.headers.addAll(headers);
+
+    request.fields.addAll(fields);
+
+    if (fileBytes != null &&
+        fileField != null &&
+        fileName != null) {
+
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          fileField,
+          fileBytes,
+          filename: fileName,
+        ),
+      );
+    }
+
+    return await request.send();
+  }
   Future<http.Response> get(
     String path, {
     Map<String, String>? headers,

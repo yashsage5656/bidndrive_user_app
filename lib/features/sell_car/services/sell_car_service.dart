@@ -70,6 +70,7 @@ class SellCarService {
 
   Future<String> createSellEnquiry(SellCarEnquiryDraft draft) async {
     final apiClient = Get.find<ApiClient>();
+
     final response = await apiClient.sendMultipart(
       '/api/enquiries',
       method: 'POST',
@@ -78,41 +79,66 @@ class SellCarService {
         'enquiryType': 'sell',
         'description': draft.description,
         'sellingDetails': jsonEncode(draft.sellingDetails),
+
+        /// NEW FIELD
+        'contactNumber': draft.contactNumber,
       },
       files: [
         for (final image in draft.images)
-        http.MultipartFile.fromBytes(
-          'enquiryImage',
-          image.bytes,
-          filename: image.name,
-        ),
+          http.MultipartFile.fromBytes(
+            'enquiryImage',
+            image.bytes,
+            filename: image.name,
+          ),
       ],
     );
+
     final body = _parseResponseBody(response);
+
+    print("==================================");
+    print("🚗 SELL ENQUIRY RESPONSE");
+    print("==================================");
+    print("📤 CONTACT NUMBER: ${draft.contactNumber}");
+    print("📊 STATUS CODE: ${response.statusCode}");
+    print("📥 RESPONSE: $body");
+    print("==================================");
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw ApiException(
-        _messageFromBody(body, fallback: 'Unable to submit sell enquiry'),
+        _messageFromBody(
+          body,
+          fallback: 'Unable to submit sell enquiry',
+        ),
         statusCode: response.statusCode,
       );
     }
 
     if (body['success'] != true) {
       throw ApiException(
-        _messageFromBody(body, fallback: 'Unable to submit sell enquiry'),
+        _messageFromBody(
+          body,
+          fallback: 'Unable to submit sell enquiry',
+        ),
         statusCode: response.statusCode,
       );
     }
 
-    final data = body['data'] as Map<String, dynamic>? ?? <String, dynamic>{};
+    final data = body['data'] as Map<String, dynamic>? ?? {};
+
     final enquiryId = (data['_id'] ?? '').toString();
+
     if (enquiryId.isEmpty) {
-      throw const ApiException('Enquiry created but enquiry ID was missing');
+      throw const ApiException(
+        'Enquiry created but enquiry ID was missing',
+      );
     }
+
+    print("✅ ENQUIRY CREATED");
+    print("🆔 ENQUIRY ID: $enquiryId");
+    print("📞 CONTACT NUMBER SAVED: ${data['contactNumber']}");
 
     return enquiryId;
   }
-
   Future<void> scheduleInspection({
     required String enquiryId,
     required String scheduleDate,

@@ -1,4 +1,5 @@
 import 'package:bid_driving/core/constants/app_colors.dart';
+import 'package:bid_driving/features/enquiries/enquiry_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
@@ -7,8 +8,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 class InquiryDetailsScreen extends StatelessWidget {
   InquiryDetailsScreen({super.key});
 
-  final dynamic item = Get.arguments;
-
+  final InquiryModel item = Get.arguments as InquiryModel;
   @override
   Widget build(BuildContext context) {
     // Using your Dark Navy for a premium feel or standard light background
@@ -55,7 +55,7 @@ class InquiryDetailsScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          item.carName,
+                          item.carName ?? '',
                           style: TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.w900,
@@ -167,11 +167,11 @@ class InquiryDetailsScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _contactRow(Iconsax.user, item.name, isDark),
+          _contactRow(Iconsax.user, item.contactName, isDark),
           const Divider(height: 30, color: AppColors.border),
-          _contactRow(Iconsax.sms, item.email, isDark),
+          _contactRow(Iconsax.sms, item.contactEmail, isDark),
           const Divider(height: 30, color: AppColors.border),
-          _contactRow(Iconsax.call, item.phone, isDark),
+          _contactRow(Iconsax.call, item.contactPhone, isDark),
         ],
       ),
     );

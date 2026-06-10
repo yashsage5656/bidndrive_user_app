@@ -144,7 +144,7 @@ class _MyCarsScreenState extends State<MyCarsScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Get.toNamed(AppRoutes.sellCarNumber),
+        onPressed: () => Get.toNamed(AppRoutes.carCondition),
         backgroundColor: AppColors.primary,
         icon: const Icon(Icons.add, color: AppColors.white),
         label: Text(

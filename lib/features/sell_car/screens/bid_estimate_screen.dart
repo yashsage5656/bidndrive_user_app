@@ -241,7 +241,7 @@ class BidEstimateScreen extends StatelessWidget {
                         const Expanded(
                           child: _InfoCard(
                             icon: Icons.description,
-                            title: 'Free RC Transfer',
+                            title: 'Easy RC Transfer',
                             subtitle: 'We handle paperwork',
                           ),
                         ),

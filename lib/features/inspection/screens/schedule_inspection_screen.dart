@@ -98,25 +98,7 @@ class _ScheduleInspectionScreenState extends State<ScheduleInspectionScreen> {
       return;
     }
 
-    if (_addressController.text.trim().isEmpty) {
-      Get.snackbar(
-        'Error',
-        'Please enter address',
-        backgroundColor: AppColors.error,
-        colorText: AppColors.white,
-      );
-      return;
-    }
 
-    if (inspectionType.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'Please select inspection type',
-        backgroundColor: AppColors.error,
-        colorText: AppColors.white,
-      );
-      return;
-    }
 
     if (enquiryId.isEmpty) {
       Get.snackbar(
@@ -256,54 +238,54 @@ class _ScheduleInspectionScreenState extends State<ScheduleInspectionScreen> {
             // SizedBox(height: AppSizes.lg),
 
             // Time Slots
-            // Text(
-            //   AppStrings.inspectionType,
-            //   style: GoogleFonts.poppins(
-            //     fontSize: AppSizes.fontLG,
-            //     fontWeight: FontWeight.w600,
-            //     color: AppColors.textPrimary,
-            //   ),
-            // ).animate(delay: 150.ms).fadeIn(),
+            Text(
+              AppStrings.inspectionType,
+              style: GoogleFonts.poppins(
+                fontSize: AppSizes.fontLG,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+            ).animate(delay: 150.ms).fadeIn(),
 
-            // SizedBox(height: AppSizes.sm),
+            SizedBox(height: AppSizes.sm),
 
-            // DropdownButtonFormField<String>(
-            //   value: _inspectionType?.isEmpty == true ? null : _inspectionType,
-            //   items: StaticData.inspectionTypes
-            //       .map(
-            //         (type) => DropdownMenuItem<String>(
-            //           value: (type['title'] ?? '').toString(),
-            //           child: Text((type['title'] ?? '').toString()),
-            //         ),
-            //       )
-            //       .toList(),
-            //   onChanged: (value) {
-            //     setState(() => _inspectionType = value);
-            //   },
-            //   decoration: InputDecoration(
-            //     filled: true,
-            //     fillColor: AppColors.white,
-            //     contentPadding: EdgeInsets.symmetric(
-            //       horizontal: AppSizes.paddingSM,
-            //       vertical: AppSizes.paddingSM,
-            //     ),
-            //     border: OutlineInputBorder(
-            //       borderRadius: BorderRadius.circular(AppSizes.inputRadius),
-            //       borderSide: BorderSide.none,
-            //     ),
-            //     enabledBorder: OutlineInputBorder(
-            //       borderRadius: BorderRadius.circular(AppSizes.inputRadius),
-            //       borderSide: BorderSide(color: AppColors.grey300),
-            //     ),
-            //     focusedBorder: OutlineInputBorder(
-            //       borderRadius: BorderRadius.circular(AppSizes.inputRadius),
-            //       borderSide: const BorderSide(
-            //         color: AppColors.primary,
-            //         width: 1.5,
-            //       ),
-            //     ),
-            //   ),
-            // ).animate(delay: 200.ms).fadeIn(),
+            DropdownButtonFormField<String>(
+              value: _inspectionType?.isEmpty == true ? null : _inspectionType,
+              items: StaticData.inspectionTypes
+                  .map(
+                    (type) => DropdownMenuItem<String>(
+                      value: (type['title'] ?? '').toString(),
+                      child: Text((type['title'] ?? '').toString()),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (value) {
+                setState(() => _inspectionType = value);
+              },
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: AppColors.white,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: AppSizes.paddingSM,
+                  vertical: AppSizes.paddingSM,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSizes.inputRadius),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSizes.inputRadius),
+                  borderSide: BorderSide(color: AppColors.grey300),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSizes.inputRadius),
+                  borderSide: const BorderSide(
+                    color: AppColors.primary,
+                    width: 1.5,
+                  ),
+                ),
+              ),
+            ).animate(delay: 200.ms).fadeIn(),
 
             SizedBox(height: AppSizes.lg),
 
@@ -371,30 +353,34 @@ class _ScheduleInspectionScreenState extends State<ScheduleInspectionScreen> {
             SizedBox(height: AppSizes.lg),
 
             // Address
-            Text(
-              AppStrings.address,
-              style: GoogleFonts.poppins(
-                fontSize: AppSizes.fontLG,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
-            ).animate(delay: 500.ms).fadeIn(),
 
             SizedBox(height: AppSizes.sm),
 
-            CustomTextField(
-              hint: 'Enter your address for inspection',
-              controller: _addressController,
-              prefixIcon: Icons.location_on_outlined,
-              maxLines: 3,
-            ).animate(delay: 600.ms).fadeIn(),
+            // Address
+            if (_inspectionType != "Center Inspection") ...[
+              Text(
+                AppStrings.address,
+                style: GoogleFonts.poppins(
+                  fontSize: AppSizes.fontLG,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ).animate(delay: 500.ms).fadeIn(),
 
-            SizedBox(height: AppSizes.sm),
+              SizedBox(height: AppSizes.sm),
 
-            // Use Current Location
-            GestureDetector(
-              onTap: ()=>_getCurrentLocation(),
-              child: Container(
+              CustomTextField(
+                hint: 'Enter your address for inspection',
+                controller: _addressController,
+                prefixIcon: Icons.location_on_outlined,
+                maxLines: 3,
+              ).animate(delay: 600.ms).fadeIn(),
+
+              SizedBox(height: AppSizes.sm),
+
+              // Use Current Location
+              GestureDetector(
+                onTap: () => _getCurrentLocation(),
                 child: Row(
                   children: [
                     Icon(
@@ -413,9 +399,10 @@ class _ScheduleInspectionScreenState extends State<ScheduleInspectionScreen> {
                     ),
                   ],
                 ),
-              ),
-            ).animate(delay: 700.ms).fadeIn(),
+              ).animate(delay: 700.ms).fadeIn(),
 
+              SizedBox(height: AppSizes.xl),
+            ],
             SizedBox(height: AppSizes.xl),
 
             // Confirm Button

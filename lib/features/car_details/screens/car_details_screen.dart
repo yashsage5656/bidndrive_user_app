@@ -244,7 +244,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "${car.model}",
+                                    "${car.make}",
 
                                     style: GoogleFonts.poppins(
                                       fontSize: AppSizes.fontXXL,
@@ -271,26 +271,6 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                                     fontSize: AppSizes.fontXXL,
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.primary,
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: AppSizes.sm,
-                                    vertical: AppSizes.xs / 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primarySurface,
-                                    borderRadius: BorderRadius.circular(
-                                      AppSizes.xs,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'EMI: ₹45,000${AppStrings.perMonth}',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: AppSizes.fontXS,
-                                      color: AppColors.primary,
-                                      fontWeight: FontWeight.w500,
-                                    ),
                                   ),
                                 ),
                               ],
@@ -346,15 +326,28 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                         SizedBox(height: AppSizes.sm),
 
                         _OverviewItem(
+                          label: 'Car Description ',
+                          value: '${car.description}',
+                        ),
+                        _OverviewItem(
+                          label: 'Car Condition ',
+                          value: '${car.condition}',
+                        ),
+                        _OverviewItem(
+                          label: 'Body Type ',
+                          value: '${car.bodyType}',
+                        ),
+                        _OverviewItem(
                           label: 'Registration Year',
                           value: '${car.year}',
                         ),
                         _OverviewItem(label: 'Location', value: car.city),
+
+                        _OverviewItem(label: 'Color', value: '${car.color}'),
                         _OverviewItem(
-                          label: 'Insurance',
-                          value: 'Comprehensive till Dec 2025',
+                          label: 'No of seats ',
+                          value: '${car.seats}',
                         ),
-                        _OverviewItem(label: 'Color', value: 'Alpine White'),
 
                         SizedBox(height: AppSizes.lg),
 
@@ -541,28 +534,53 @@ class _OverviewItem extends StatelessWidget {
   final String label;
   final String value;
 
-  const _OverviewItem({required this.label, required this.value});
+  const _OverviewItem({
+    required this.label,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: AppSizes.xs),
+      padding: EdgeInsets.symmetric(
+        vertical: AppSizes.xs,
+      ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment:
+        CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: GoogleFonts.poppins(
-              fontSize: AppSizes.fontMD,
-              color: AppColors.textSecondary,
+
+          /// LABEL
+          Expanded(
+            flex: 4,
+            child: Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: AppSizes.fontMD,
+                color:
+                AppColors.textSecondary,
+              ),
             ),
           ),
-          Text(
-            value,
-            style: GoogleFonts.poppins(
-              fontSize: AppSizes.fontMD,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textPrimary,
+
+          SizedBox(width: AppSizes.sm),
+
+          /// VALUE
+          Expanded(
+            flex: 5,
+            child: Text(
+              value.isEmpty
+                  ? "N/A"
+                  : value,
+              textAlign: TextAlign.end,
+              overflow: TextOverflow.visible,
+              softWrap: true,
+              style: GoogleFonts.poppins(
+                fontSize: AppSizes.fontMD,
+                fontWeight: FontWeight.w600,
+                color:
+                AppColors.textPrimary,
+              ),
             ),
           ),
         ],
@@ -570,7 +588,6 @@ class _OverviewItem extends StatelessWidget {
     );
   }
 }
-
 class _FeatureChip extends StatelessWidget {
   final String label;
 

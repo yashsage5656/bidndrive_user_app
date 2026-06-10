@@ -1,5 +1,6 @@
 import 'package:bid_driving/features/home/screens/main_screen.dart';
 import 'package:bid_driving/features/profile/screens/privacy_policy.dart';
+import 'package:bid_driving/features/profile/screens/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
@@ -20,108 +21,159 @@ class ProfileScreen extends StatelessWidget {
     AppSizes.init(context);
     final authController = Get.find<AuthController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
+    final profileController = Get.put(ProfileController());
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkNavy : AppColors.background,
       body: Obx(() {
-        final user = authController.session;
-        if (user == null) {
-          return const Center(child: CircularProgressIndicator(color: AppColors.primary));
+        final user = profileController.profile.value;
+
+        print("📱 USER MOBILE NO: ${user?.phone}");
+
+        if (profileController.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: AppColors.primary,
+            ),
+          );
         }
 
-        final hasProfileImage = user.profileImage.trim().isNotEmpty;
+        if (user == null) {
+          return const Center(
+            child: Text("No Profile Data"),
+          );
+        }
+
+        final hasProfileImage =
+            user.profileImage.trim().isNotEmpty;
 
         return CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            /// 🎨 PREMIUM DYNAMIC HEADER
             SliverAppBar(
               automaticallyImplyLeading: false,
               expandedHeight: 260,
               pinned: true,
               stretch: true,
-              backgroundColor: isDark ? AppColors.darkNavy : AppColors.primary,
+              backgroundColor:
+              isDark
+                  ? AppColors.darkNavy
+                  : AppColors.primary,
               flexibleSpace: FlexibleSpaceBar(
-                stretchModes: const [StretchMode.zoomBackground],
+                stretchModes: const [
+                  StretchMode.zoomBackground,
+                ],
                 background: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Background Gradient/Pattern
                     Container(
                       decoration: BoxDecoration(
-                        gradient: AppColors.primaryGradient,
+                        gradient:
+                        AppColors.primaryGradient,
                       ),
                     ),
-                    // Decorative Circle
+
                     Positioned(
                       top: -50,
                       right: -50,
                       child: CircleAvatar(
                         radius: 100,
-                        backgroundColor: Colors.white.withOpacity(0.1),
+                        backgroundColor:
+                        Colors.white.withOpacity(0.1),
                       ),
                     ),
 
-                    // User Info Column
                     Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment:
+                      MainAxisAlignment.center,
                       children: [
                         const SizedBox(height: 40),
-                        /// 📸 AVATAR WITH GLOW
+
                         Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 2,
+                            ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
+                                color: Colors.black
+                                    .withOpacity(0.2),
                                 blurRadius: 20,
-                                offset: const Offset(0, 10),
+                                offset: const Offset(
+                                  0,
+                                  10,
+                                ),
                               )
                             ],
                           ),
                           child: CircleAvatar(
                             radius: 55,
-                            backgroundColor: AppColors.grey200,
-                            backgroundImage: hasProfileImage
-                                ? CachedNetworkImageProvider(user.profileImage)
+                            backgroundColor:
+                            AppColors.grey200,
+                            backgroundImage:
+                            hasProfileImage
+                                ? CachedNetworkImageProvider(
+                              user.profileImage,
+                            )
                                 : null,
-                            child: !hasProfileImage
-                                ? Icon(Iconsax.user, size: 40, color: AppColors.primary)
+                            child:
+                            !hasProfileImage
+                                ? Icon(
+                              Iconsax.user,
+                              size: 40,
+                              color:
+                              AppColors
+                                  .primary,
+                            )
                                 : null,
                           ),
-                        ).animate().scale(duration: 400.ms, curve: Curves.bounceOut),
+                        ),
 
                         const SizedBox(height: 15),
 
                         Text(
-                          user.fullName.isEmpty ? 'User' : user.fullName,
-                          style: GoogleFonts.poppins(
+                          user.fullName.isEmpty
+                              ? 'User'
+                              : user.fullName,
+                          style:
+                          GoogleFonts.poppins(
                             fontSize: 22,
-                            fontWeight: FontWeight.bold,
+                            fontWeight:
+                            FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
+
                         Text(
                           user.phone,
-                          style: GoogleFonts.poppins(
+                          style:
+                          GoogleFonts.poppins(
                             fontSize: 14,
-                            color: Colors.white.withOpacity(0.8),
-                          ),
-                        ), Text(
-                          user.email,
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.white
+                                .withOpacity(0.8),
                           ),
                         ),
+
+                        Text(
+                          user.email,
+                          style:
+                          GoogleFonts.poppins(
+                            fontSize: 14,
+                            color: Colors.white
+                                .withOpacity(0.8),
+                          ),
+                        ),
+
+
                       ],
                     ),
                   ],
                 ),
               ),
             ),
+
 
             /// 🛠 MENU SECTION
             SliverToBoxAdapter(
@@ -159,20 +211,20 @@ class ProfileScreen extends StatelessWidget {
                       color: Colors.green,
                       onTap: () => Get.toNamed(AppRoutes.getEnq),
                     ),
-                    _buildPremiumTile(
-                        icon: Iconsax.car,
-                        title: AppStrings.myListings,
-                        color: Colors.purple,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const MainScreen(),
-                              settings: const RouteSettings(arguments: {'tabIndex': 3}),
-                            ),
-                          );
-                        }
-                    ),
+                    // _buildPremiumTile(
+                    //     icon: Iconsax.car,
+                    //     title: AppStrings.myListings,
+                    //     color: Colors.purple,
+                    //     onTap: () {
+                    //       Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //           builder: (context) => const MainScreen(),
+                    //           settings: const RouteSettings(arguments: {'tabIndex': 3}),
+                    //         ),
+                    //       );
+                    //     }
+                    // ),
                     const Divider(indent: 20, endIndent: 20, height: 1),
                     _buildPremiumTile(
                       icon: Iconsax.setting_2,

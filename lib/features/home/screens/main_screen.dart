@@ -1,4 +1,5 @@
 import 'package:bid_driving/features/profile/screens/profile_screen.dart';
+import 'package:bid_driving/features/sell_car/screens/car_condition_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_sizes.dart';
@@ -43,7 +44,8 @@ class _MainScreenState extends State<MainScreen> {
     final List<Widget> _screens = [
       const HomeScreen(),
       BuyCarsScreen(brand: widget.brand), // 👈 PASS HERE
-      const SellCarNumberScreen(),
+      CarConditionScreen(),
+      // const SellCarNumberScreen(),
       const MyCarsScreen(),
       const ProfileScreen(),
     ];

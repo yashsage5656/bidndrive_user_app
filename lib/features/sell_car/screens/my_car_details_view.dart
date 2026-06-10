@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:bid_driving/features/auth/services/api_client.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -28,14 +31,95 @@ class _MyCarDetailsViewState extends State<MyCarDetailsView> {
   late final String _enquiryId;
   late Future<SellCarEnquiry> _detailsFuture;
   bool _didUpdateSchedule = false;
+  final ApiClient _apiClient = ApiClient();
+  RxString price = ''.obs;
 
   @override
   void initState() {
     super.initState();
     _enquiryId = (Get.arguments ?? '').toString();
+    getSoldCarPrice();
     _detailsFuture = _loadDetails();
   }
+  Future<void> getSoldCarPrice() async {
+    try {
 
+      final response = await _apiClient.get(
+        '/api/admin/user/sold-car-price',
+      );
+
+      print("PRICE API => ${response.body}");
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 &&
+          data['success'] == true) {
+
+        /// ✅ CHECK DATA EXISTS
+        if (data['data'] != null &&
+            data['data'] is List &&
+            data['data'].isNotEmpty) {
+
+          /// ✅ FIND MATCHING ENQUIRY
+          final matchedCar =
+          data['data'].firstWhere(
+                (item) =>
+            item['enquiryId'] ==
+                _enquiryId,
+            orElse: () => null,
+          );
+
+          /// ✅ MATCH FOUND
+          if (matchedCar != null) {
+
+            price.value =
+                matchedCar['soldPrice']
+                    .toString();
+
+            print(
+              "💰 MATCHED PRICE => ₹${price.value}",
+            );
+
+          } else {
+
+            /// ❌ NO MATCH FOUND
+            price.value = '';
+
+            print(
+              "⚠️ NO MATCHED ENQUIRY FOUND",
+            );
+          }
+
+        } else {
+
+          /// ❌ EMPTY DATA
+          price.value = '';
+
+          print(
+            "⚠️ PRICE DATA EMPTY",
+          );
+        }
+
+      } else {
+
+        /// ❌ API FAILED
+        price.value = '';
+
+        print(
+          "❌ FAILED => ${data['message']}",
+        );
+      }
+
+    } catch (e) {
+
+      /// ❌ ERROR
+      price.value = '';
+
+      print(
+        "❌ PRICE ERROR => $e",
+      );
+    }
+  }
   @override
   void dispose() {
     _imageController.dispose();
@@ -234,6 +318,92 @@ class _MyCarDetailsViewState extends State<MyCarDetailsView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 18,
+                                vertical: 20,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(22),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.12),
+                                    blurRadius: 18,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
+                                border: Border.all(
+                                  color: Colors.grey.withOpacity(0.08),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+
+                                  /// 💰 ICON
+                                  Container(
+                                    padding: const EdgeInsets.all(14),
+                                    decoration: BoxDecoration(
+                                      color: (price.value.isEmpty)
+                                          ? Colors.orange.withOpacity(0.12)
+                                          : Colors.green.withOpacity(0.12),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.currency_rupee,
+                                      color: (price.value.isEmpty)
+                                          ? Colors.orange
+                                          : Colors.green,
+                                      size: 28,
+                                    ),
+                                  ),
+
+                                  const SizedBox(width: 16),
+
+                                  /// 💵 PRICE SECTION
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+
+                                        /// PRICE
+                                        Obx(
+                                              () => Text(
+                                            price.value.isEmpty
+                                                ? "₹ XXXX"
+                                                : "₹ ${price.value}",
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 28,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                              letterSpacing: 1,
+                                            ),
+                                          ),
+                                        ),
+
+                                        const SizedBox(height: 6),
+
+                                        /// MESSAGE
+                                        Obx(
+                                              () => Text(
+                                            price.value.isEmpty
+                                                ? "Your price will be updated shortly"
+                                                : "Congratulations! Your car price has been updated.",
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 13,
+                                              color: Colors.black54,
+                                              height: 1.4,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),                            SizedBox(height: 30,),
                             _SummaryCard(enquiry: enquiry)
                                 .animate()
                                 .fadeIn()
@@ -364,33 +534,187 @@ class _MyCarDetailsViewState extends State<MyCarDetailsView> {
                 ),
                 decoration: BoxDecoration(
                   color: AppColors.white,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(26),
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.shadowMedium,
-                      blurRadius: 10,
-                      offset: const Offset(0, -3),
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 24,
+                      offset: const Offset(0, -6),
                     ),
                   ],
                 ),
                 child: Row(
                   children: [
-                    Expanded(
-                      child: CustomButton(
-                        text: 'Back to My Cars',
-                        onPressed: () => Get.back(result: _didUpdateSchedule),
-                        isOutlined: true,
-                      ),
+
+                    /// 💰 ACCEPT PRICE BUTTON
+                    Obx(
+                          () => price.value.isNotEmpty
+                          ? Expanded(
+                        child: Container(
+                          height: 56,
+                          decoration: BoxDecoration(
+                            gradient:
+                            const LinearGradient(
+                              colors: [
+                                Color(0xFF4F46E5),
+                                Color(0xFF7C3AED),
+                              ],
+                              begin:
+                              Alignment.topLeft,
+                              end: Alignment
+                                  .bottomRight,
+                            ),
+                            borderRadius:
+                            BorderRadius.circular(
+                              18,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(
+                                  0xFF7C3AED,
+                                ).withOpacity(0.30),
+                                blurRadius: 16,
+                                offset:
+                                const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius:
+                              BorderRadius.circular(
+                                18,
+                              ),
+                              onTap: () {
+
+                              },
+                              child: Padding(
+                                padding:
+                                const EdgeInsets
+                                    .symmetric(
+                                  horizontal: 14,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .center,
+                                  children: [
+
+                                    Container(
+                                      padding:
+                                      const EdgeInsets
+                                          .all(6),
+                                      decoration:
+                                      BoxDecoration(
+                                        color: Colors
+                                            .white
+                                            .withOpacity(
+                                          0.18,
+                                        ),
+                                        shape: BoxShape
+                                            .circle,
+                                      ),
+                                      child:
+                                      const Icon(
+                                        Icons
+                                            .check_circle,
+                                        color:
+                                        Colors.white,
+                                        size: 18,
+                                      ),
+                                    ),
+
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+
+                                    Flexible(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment
+                                            .center,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment
+                                            .start,
+                                        children: [
+
+                                          Text(
+                                            "Accept Price",
+                                            overflow:
+                                            TextOverflow
+                                                .ellipsis,
+                                            style:
+                                            GoogleFonts
+                                                .poppins(
+                                              fontSize:
+                                              14,
+                                              fontWeight:
+                                              FontWeight
+                                                  .w600,
+                                              color: Colors
+                                                  .white,
+                                            ),
+                                          ),
+
+                                          Text(
+                                            "₹ ${price.value}",
+                                            overflow:
+                                            TextOverflow
+                                                .ellipsis,
+                                            style:
+                                            GoogleFonts
+                                                .poppins(
+                                              fontSize:
+                                              11,
+                                              color: Colors
+                                                  .white70,
+                                              fontWeight:
+                                              FontWeight
+                                                  .w400,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                          : const SizedBox.shrink(),
                     ),
-                    SizedBox(width: AppSizes.md),
+
+                    /// SPACE
+                    Obx(
+                          () => price.value.isNotEmpty
+                          ? SizedBox(
+                        width: AppSizes.md,
+                      )
+                          : const SizedBox.shrink(),
+                    ),
+
+                    /// 📅 UPDATE BUTTON
                     Expanded(
-                      child: CustomButton(
-                        text: 'Update Schedule',
-                        onPressed: () => _openUpdateSchedule(enquiry),
+                      child: SizedBox(
+                        height: 56,
+                        child: CustomButton(
+                          text: 'Update Schedule',
+                          onPressed: () =>
+                              _openUpdateSchedule(
+                                enquiry,
+                              ),
+                        ),
                       ),
                     ),
                   ],
                 ),
-              ),
+              )
+
             ],
           );
         },

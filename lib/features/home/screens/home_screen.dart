@@ -191,11 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              _buildGlassIconButton(
-                                Icons.notifications_none_rounded,
-                                hasBadge: true,
-                              ),
+
                             ],
                           )
                           .animate()

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
@@ -31,9 +30,10 @@ class _CarConditionScreenState extends State<CarConditionScreen> {
   final _colorController = TextEditingController();
   final _kilometersController = TextEditingController();
   final _expectedPriceController = TextEditingController();
+  final _contactController = TextEditingController();
   final _cityController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final ImagePicker _imagePicker = ImagePicker();
+  // final ImagePicker _imagePicker = ImagePicker();
   final SellCarService _sellCarService = SellCarService();
 
   String? _fuelType;
@@ -107,223 +107,223 @@ class _CarConditionScreenState extends State<CarConditionScreen> {
     super.dispose();
   }
 
-  Future<void> _pickImages() async {
-    /// IMAGE SOURCE SELECTION
-    final source = await showModalBottomSheet<ImageSource>(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20),
-        ),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 42,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
-                Text(
-                  "Select Image Source",
-                  style: GoogleFonts.inter(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pop(
-                            context,
-                            ImageSource.camera,
-                          );
-                        },
-                        borderRadius: BorderRadius.circular(16),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 22,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: Colors.grey.shade200,
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary
-                                      .withOpacity(.08),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.camera_alt_rounded,
-                                  color: AppColors.primary,
-                                  size: 28,
-                                ),
-                              ),
-
-                              const SizedBox(height: 12),
-
-                              Text(
-                                "Camera",
-                                style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(width: 16),
-
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pop(
-                            context,
-                            ImageSource.gallery,
-                          );
-                        },
-                        borderRadius: BorderRadius.circular(16),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 22,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: Colors.grey.shade200,
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: Colors.green
-                                      .withOpacity(.08),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.photo_library_rounded,
-                                  color: Colors.green,
-                                  size: 28,
-                                ),
-                              ),
-
-                              const SizedBox(height: 12),
-
-                              Text(
-                                "Gallery",
-                                style: GoogleFonts.inter(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 10),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-
-    if (source == null) {
-      return;
-    }
-
-    final remaining = 10 - _images.length;
-
-    if (remaining <= 0) {
-      _showSnackbar(
-        'You can upload up to 10 images only',
-        isError: true,
-      );
-      return;
-    }
-
-    final attachments = <SellCarImageAttachment>[];
-
-    /// CAMERA
-    if (source == ImageSource.camera) {
-      final captured = await _imagePicker.pickImage(
-        source: ImageSource.camera,
-        imageQuality: 80,
-      );
-
-      if (captured == null) {
-        return;
-      }
-
-      attachments.add(
-        SellCarImageAttachment(
-          bytes: await captured.readAsBytes(),
-          name: captured.name,
-        ),
-      );
-    }
-
-    /// GALLERY
-    else {
-      final selected = await _imagePicker.pickMultiImage(
-        imageQuality: 80,
-      );
-
-      if (selected.isEmpty) {
-        return;
-      }
-
-      final limited = selected.take(remaining);
-
-      for (final image in limited) {
-        attachments.add(
-          SellCarImageAttachment(
-            bytes: await image.readAsBytes(),
-            name: image.name,
-          ),
-        );
-      }
-    }
-
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      _images.addAll(attachments);
-    });
-  }
+  // Future<void> _pickImages() async {
+  //   /// IMAGE SOURCE SELECTION
+  //   final source = await showModalBottomSheet<ImageSource>(
+  //     context: context,
+  //     backgroundColor: Colors.white,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(
+  //         top: Radius.circular(20),
+  //       ),
+  //     ),
+  //     builder: (context) {
+  //       return SafeArea(
+  //         child: Padding(
+  //           padding: const EdgeInsets.all(20),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               Container(
+  //                 width: 42,
+  //                 height: 4,
+  //                 decoration: BoxDecoration(
+  //                   color: Colors.grey.shade300,
+  //                   borderRadius: BorderRadius.circular(10),
+  //                 ),
+  //               ),
+  //
+  //               const SizedBox(height: 24),
+  //
+  //               Text(
+  //                 "Select Image Source",
+  //                 style: GoogleFonts.inter(
+  //                   fontSize: 18,
+  //                   fontWeight: FontWeight.w800,
+  //                 ),
+  //               ),
+  //
+  //               const SizedBox(height: 24),
+  //
+  //               Row(
+  //                 children: [
+  //                   Expanded(
+  //                     child: InkWell(
+  //                       onTap: () {
+  //                         Navigator.pop(
+  //                           context,
+  //                           ImageSource.camera,
+  //                         );
+  //                       },
+  //                       borderRadius: BorderRadius.circular(16),
+  //                       child: Container(
+  //                         padding: const EdgeInsets.symmetric(
+  //                           vertical: 22,
+  //                         ),
+  //                         decoration: BoxDecoration(
+  //                           borderRadius: BorderRadius.circular(16),
+  //                           border: Border.all(
+  //                             color: Colors.grey.shade200,
+  //                           ),
+  //                         ),
+  //                         child: Column(
+  //                           children: [
+  //                             Container(
+  //                               padding: const EdgeInsets.all(14),
+  //                               decoration: BoxDecoration(
+  //                                 color: AppColors.primary
+  //                                     .withOpacity(.08),
+  //                                 shape: BoxShape.circle,
+  //                               ),
+  //                               child: const Icon(
+  //                                 Icons.camera_alt_rounded,
+  //                                 color: AppColors.primary,
+  //                                 size: 28,
+  //                               ),
+  //                             ),
+  //
+  //                             const SizedBox(height: 12),
+  //
+  //                             Text(
+  //                               "Camera",
+  //                               style: GoogleFonts.inter(
+  //                                 fontWeight: FontWeight.w700,
+  //                                 fontSize: 14,
+  //                               ),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //
+  //                   const SizedBox(width: 16),
+  //
+  //                   Expanded(
+  //                     child: InkWell(
+  //                       onTap: () {
+  //                         Navigator.pop(
+  //                           context,
+  //                           ImageSource.gallery,
+  //                         );
+  //                       },
+  //                       borderRadius: BorderRadius.circular(16),
+  //                       child: Container(
+  //                         padding: const EdgeInsets.symmetric(
+  //                           vertical: 22,
+  //                         ),
+  //                         decoration: BoxDecoration(
+  //                           borderRadius: BorderRadius.circular(16),
+  //                           border: Border.all(
+  //                             color: Colors.grey.shade200,
+  //                           ),
+  //                         ),
+  //                         child: Column(
+  //                           children: [
+  //                             Container(
+  //                               padding: const EdgeInsets.all(14),
+  //                               decoration: BoxDecoration(
+  //                                 color: Colors.green
+  //                                     .withOpacity(.08),
+  //                                 shape: BoxShape.circle,
+  //                               ),
+  //                               child: const Icon(
+  //                                 Icons.photo_library_rounded,
+  //                                 color: Colors.green,
+  //                                 size: 28,
+  //                               ),
+  //                             ),
+  //
+  //                             const SizedBox(height: 12),
+  //
+  //                             Text(
+  //                               "Gallery",
+  //                               style: GoogleFonts.inter(
+  //                                 fontWeight: FontWeight.w700,
+  //                                 fontSize: 14,
+  //                               ),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //
+  //               const SizedBox(height: 10),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  //
+  //   if (source == null) {
+  //     return;
+  //   }
+  //
+  //   final remaining = 10 - _images.length;
+  //
+  //   if (remaining <= 0) {
+  //     _showSnackbar(
+  //       'You can upload up to 10 images only',
+  //       isError: true,
+  //     );
+  //     return;
+  //   }
+  //
+  //   final attachments = <SellCarImageAttachment>[];
+  //
+  //   /// CAMERA
+  //   if (source == ImageSource.camera) {
+  //     final captured = await _imagePicker.pickImage(
+  //       source: ImageSource.camera,
+  //       imageQuality: 80,
+  //     );
+  //
+  //     if (captured == null) {
+  //       return;
+  //     }
+  //
+  //     attachments.add(
+  //       SellCarImageAttachment(
+  //         bytes: await captured.readAsBytes(),
+  //         name: captured.name,
+  //       ),
+  //     );
+  //   }
+  //
+  //   /// GALLERY
+  //   else {
+  //     final selected = await _imagePicker.pickMultiImage(
+  //       imageQuality: 80,
+  //     );
+  //
+  //     if (selected.isEmpty) {
+  //       return;
+  //     }
+  //
+  //     final limited = selected.take(remaining);
+  //
+  //     for (final image in limited) {
+  //       attachments.add(
+  //         SellCarImageAttachment(
+  //           bytes: await image.readAsBytes(),
+  //           name: image.name,
+  //         ),
+  //       );
+  //     }
+  //   }
+  //
+  //   if (!mounted) {
+  //     return;
+  //   }
+  //
+  //   setState(() {
+  //     _images.addAll(attachments);
+  //   });
+  // }
 
 
 
@@ -382,16 +382,15 @@ class _CarConditionScreenState extends State<CarConditionScreen> {
 
     if (_fuelType == null ||
         _transmission == null ||
-        _ownership == null ||
-        _accidentHistory == null) {
+        _ownership == null ){
       _showSnackbar('Please complete all dropdown selections', isError: true);
       return;
     }
 
-    if (_images.isEmpty) {
-      _showSnackbar('Please add at least one car image', isError: true);
-      return;
-    }
+    // if (_images.isEmpty) {
+    //   _showSnackbar('Please add at least one car image', isError: true);
+    //   return;
+    // }
 
     final draft = SellCarEnquiryDraft(
       make: _makeController.text.trim(),
@@ -399,13 +398,14 @@ class _CarConditionScreenState extends State<CarConditionScreen> {
       year: int.parse(_yearController.text.trim()),
       registrationNumber: _registrationController.text.trim().toUpperCase(),
       color: _colorController.text.trim(),
-      kilometersDriven: int.parse(_kilometersController.text.trim()),
+      // kilometersDriven: int.parse(_kilometersController.text.trim()),
       expectedPrice: int.parse(_expectedPriceController.text.trim()),
       city: _cityController.text.trim(),
+      contactNumber: _contactController.text.trim(),
       fuelType: _fuelType!,
       transmission: _transmission!,
       ownership: _ownership!,
-      accidentHistory: _accidentHistory!,
+      // accidentHistory: _accidentHistory!,
       description: _descriptionController.text.trim(),
       images: List<SellCarImageAttachment>.from(_images),
     );
@@ -487,7 +487,9 @@ class _CarConditionScreenState extends State<CarConditionScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: const CustomAppBar(title: 'Sell Car Details'),
+      appBar: const CustomAppBar(title: 'Sell Car Details',
+        showBackButton: false,
+      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(AppSizes.paddingLG),
         child: Form(
@@ -590,27 +592,27 @@ class _CarConditionScreenState extends State<CarConditionScreen> {
                   ),
                 ],
               ),
-              SizedBox(height: AppSizes.md),
-              CustomTextField(
-                label: 'Registration Number',
-                hint: 'e.g. MH12CD5678',
-                controller: _registrationController,
-                validator: _validateRegistration,
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9 ]')),
-                  LengthLimitingTextInputFormatter(13),
-                ],
-              ),
-              SizedBox(height: AppSizes.md),
-              CustomTextField(
-                label: 'Kilometers Driven',
-                hint: 'e.g. 52000',
-                controller: _kilometersController,
-                keyboardType: TextInputType.number,
-                validator: (value) =>
-                    _validateNumber(value, 'kilometers driven'),
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              ),
+              // SizedBox(height: AppSizes.md),
+              // CustomTextField(
+              //   label: 'Registration Number',
+              //   hint: 'e.g. MH12CD5678',
+              //   controller: _registrationController,
+              //   validator: _validateRegistration,
+              //   inputFormatters: [
+              //     FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9 ]')),
+              //     LengthLimitingTextInputFormatter(13),
+              //   ],
+              // ),
+              // SizedBox(height: AppSizes.md),
+              // CustomTextField(
+              //   label: 'Kilometers Driven',
+              //   hint: 'e.g. 52000',
+              //   controller: _kilometersController,
+              //   keyboardType: TextInputType.number,
+              //   validator: (value) =>
+              //       _validateNumber(value, 'kilometers driven'),
+              //   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              // ),
               SizedBox(height: AppSizes.lg),
               const _SectionTitle(title: 'Selling Details'),
               SizedBox(height: AppSizes.md),
@@ -620,6 +622,14 @@ class _CarConditionScreenState extends State<CarConditionScreen> {
                 controller: _expectedPriceController,
                 keyboardType: TextInputType.number,
                 validator: (value) => _validateNumber(value, 'expected price'),
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              ),
+              CustomTextField(
+                label: 'Contact No.',
+                hint: 'e.g. 9132191321',
+                controller: _contactController,
+                keyboardType: TextInputType.number,
+                validator: (value) => _validateNumber(value, 'contact number'),
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               ),
               SizedBox(height: AppSizes.md),
@@ -650,13 +660,7 @@ class _CarConditionScreenState extends State<CarConditionScreen> {
                 items: _ownershipOptions,
                 onChanged: (value) => setState(() => _ownership = value),
               ),
-              SizedBox(height: AppSizes.md),
-              _DropdownField(
-                label: 'Accident History',
-                value: _accidentHistory,
-                items: _accidentOptions,
-                onChanged: (value) => setState(() => _accidentHistory = value),
-              ),
+
               SizedBox(height: AppSizes.md),
               CustomTextField(
                 label: 'Description',
@@ -666,16 +670,16 @@ class _CarConditionScreenState extends State<CarConditionScreen> {
                 validator: (value) => _requiredText(value, 'Description'),
               ),
               SizedBox(height: AppSizes.lg),
-              const _SectionTitle(title: 'Car Images'),
-              SizedBox(height: AppSizes.xs),
-              Text(
-                'Upload up to 10 photos of your car.',
-                style: GoogleFonts.poppins(
-                  fontSize: AppSizes.fontSM,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              SizedBox(height: AppSizes.md),
+              // const _SectionTitle(title: 'Car Images'),
+              // SizedBox(height: AppSizes.xs),
+              // Text(
+              //   'Upload up to 10 photos of your car.',
+              //   style: GoogleFonts.poppins(
+              //     fontSize: AppSizes.fontSM,
+              //     color: AppColors.textSecondary,
+              //   ),
+              // ),
+              // SizedBox(height: AppSizes.md),
               Wrap(
                 spacing: AppSizes.sm,
                 runSpacing: AppSizes.sm,
@@ -721,40 +725,7 @@ class _CarConditionScreenState extends State<CarConditionScreen> {
                       ],
                     );
                   }),
-                  if (_images.length < 10)
-                    GestureDetector(
-                      onTap: _pickImages,
-                      child: Container(
-                        width: AppSizes.w(22),
-                        height: AppSizes.w(22),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(AppSizes.cardRadius),
-                          border: Border.all(
-                            color: AppColors.primary.withOpacity(0.4),
-                          ),
-                          color: AppColors.primarySurface,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.add_a_photo_outlined,
-                              color: AppColors.primary,
-                              size: AppSizes.iconMD,
-                            ),
-                            SizedBox(height: AppSizes.xs),
-                            Text(
-                              'Add',
-                              style: GoogleFonts.poppins(
-                                fontSize: AppSizes.fontXS,
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+
                 ],
               ),
               SizedBox(height: AppSizes.xl),

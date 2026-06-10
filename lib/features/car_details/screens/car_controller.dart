@@ -37,7 +37,7 @@ class CarController extends GetxController {
 
       print("\n========= 🚀 FETCH START =========");
 
-      final response = await apiClient.get('/api/admin/cars');
+      final response = await apiClient.get( '/api/admin/cars?page=1&limit=100',);
 
       print("📡 API STATUS: ${response.statusCode}");
 

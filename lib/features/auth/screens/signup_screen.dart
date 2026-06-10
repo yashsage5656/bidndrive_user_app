@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
@@ -36,7 +37,7 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _acceptedTerms = false;
   bool _showTermsError = false;
   XFile? _selectedProfileImage;
-  Uint8List? _selectedProfileBytes;
+  // Uint8List? _selectedProfileBytes;
 
   @override
   void dispose() {
@@ -49,26 +50,6 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  Future<void> _pickProfileImage() async {
-    final file = await _imagePicker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
-    );
-
-    if (file == null) {
-      return;
-    }
-
-    final bytes = await file.readAsBytes();
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      _selectedProfileImage = file;
-      _selectedProfileBytes = bytes;
-    });
-  }
 
   Future<void> _handleSignup() async {
     FocusScope.of(context).unfocus();
@@ -91,8 +72,8 @@ class _SignupScreenState extends State<SignupScreen> {
         lastName: _lastNameController.text.trim(),
         phone: _phoneController.text.trim(),
         acceptedTerms: _acceptedTerms,
-        profileImageBytes: _selectedProfileBytes,
-        profileImageName: _selectedProfileImage?.name,
+        // profileImageBytes: _selectedProfileBytes,
+        // profileImageName: _selectedProfileImage?.name,
       );
       if (!mounted) {
         return;
@@ -289,48 +270,6 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                             child: Column(
                               children: [
-                                GestureDetector(
-                                  onTap: _pickProfileImage,
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        width: AppSizes.avatarLG,
-                                        height: AppSizes.avatarLG,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: AppColors.white.withOpacity(
-                                              0.2,
-                                            ),
-                                          ),
-                                          color: AppColors.white.withOpacity(
-                                            0.08,
-                                          ),
-                                        ),
-                                        child: ClipOval(
-                                          child: _selectedProfileBytes != null
-                                              ? Image.memory(
-                                                  _selectedProfileBytes!,
-                                                  fit: BoxFit.cover,
-                                                )
-                                              : Icon(
-                                                  Icons.add_a_photo_outlined,
-                                                  color: AppColors.white,
-                                                  size: AppSizes.iconLG,
-                                                ),
-                                        ),
-                                      ),
-                                      SizedBox(height: AppSizes.sm),
-                                      Text(
-                                        'Add profile photo (optional)',
-                                        style: GoogleFonts.poppins(
-                                          fontSize: AppSizes.fontSM,
-                                          color: AppColors.grey400,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
 
                                 SizedBox(height: AppSizes.lg),
 

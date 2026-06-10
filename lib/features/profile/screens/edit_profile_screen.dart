@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'dart:typed_data';
-
+import 'package:http/http.dart' as http;
+import 'package:bid_driving/features/auth/services/api_client.dart';
+import 'package:bid_driving/features/profile/screens/profile_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,8 +29,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _authController = Get.find<AuthController>();
-  final _imagePicker = ImagePicker();
+  final ProfileController _profileController =
+  Get.put(ProfileController());  final _imagePicker = ImagePicker();
 
   bool _isLoading = false;
   XFile? _selectedImage;
@@ -36,12 +39,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    final session = _authController.session;
-    _firstNameController.text = session?.firstName ?? '';
-    _lastNameController.text = session?.lastName ?? '';
-    _phoneController.text = session?.phone ?? '';
-  }
 
+    final user = _profileController.profile.value;
+
+    _firstNameController.text =
+        user?.firstName ?? '';
+
+    _lastNameController.text =
+        user?.lastName ?? '';
+
+    _phoneController.text =
+        user?.phone ?? '';
+
+    print("📱 EDIT PROFILE PHONE => ${user?.phone}");
+  }
   @override
   void dispose() {
     _firstNameController.dispose();
@@ -72,32 +83,73 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<void> _submit() async {
     FocusScope.of(context).unfocus();
-    if (!_formKey.currentState!.validate() || _isLoading) {
+
+    if (!_formKey.currentState!.validate() ||
+        _isLoading) {
       return;
     }
 
     setState(() => _isLoading = true);
+
     try {
-      await _authController.updateProfile(
-        firstName: _firstNameController.text.trim(),
-        lastName: _lastNameController.text.trim(),
-        phone: _phoneController.text.trim(),
-        profileImageBytes: _selectedImageBytes,
-        profileImageName: _selectedImage?.name,
+      final streamedResponse =
+      await ApiClient().putMultipart(
+        '/api/auth/update-profile',
+        fields: {
+          "firstName":
+          _firstNameController.text.trim(),
+          "lastName":
+          _lastNameController.text.trim(),
+          "phone":
+          _phoneController.text.trim(),
+        },
+        fileBytes: _selectedImageBytes,
+        fileField: "profileImage",
+        fileName: _selectedImage?.name,
       );
-      Get.back();
-      _showSnackbar('Profile updated successfully', isError: false);
-    } on ApiException catch (error) {
-      _showSnackbar(error.message, isError: true);
-    } catch (_) {
-      _showSnackbar('Something went wrong. Please try again.', isError: true);
+
+      final response =
+      await http.Response.fromStream(
+        streamedResponse,
+      );
+
+      print("UPDATE PROFILE => ${response.body}");
+
+      final data = jsonDecode(response.body);
+
+
+      if (response.statusCode == 200 &&
+          data['success'] == true) {
+
+        await _profileController.getProfile();
+
+        Get.back();
+
+        _showSnackbar(
+          'Profile updated successfully',
+          isError: false,
+        );
+
+      } else {
+        _showSnackbar(
+          data['message'] ??
+              'Failed to update profile',
+          isError: true,
+        );
+      }
+    } catch (e) {
+      print("❌ UPDATE PROFILE ERROR => $e");
+
+      _showSnackbar(
+        'Something went wrong',
+        isError: true,
+      );
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
       }
     }
   }
-
   String? _validateName(String? value, String label) {
     final text = value?.trim() ?? '';
     if (text.isEmpty) {
@@ -134,9 +186,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     AppSizes.init(context);
-    final session = _authController.session;
-    final imageUrl = session?.profileImage ?? '';
+    // final session = _authController.session;
+    // final imageUrl = session?.profileImage ?? '';
+    final user = _profileController.profile.value;
 
+    final imageUrl =
+        user?.profileImage ?? '';
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,

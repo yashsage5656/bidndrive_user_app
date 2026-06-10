@@ -18,31 +18,33 @@ class SellCarEnquiryDraft {
     required this.year,
     required this.registrationNumber,
     required this.color,
-    required this.kilometersDriven,
     required this.expectedPrice,
     required this.city,
     required this.fuelType,
     required this.transmission,
     required this.ownership,
-    required this.accidentHistory,
     required this.description,
     required this.images,
+    required this.contactNumber,
   });
 
   final String? enquiryId;
+
   final String make;
   final String model;
   final int year;
   final String registrationNumber;
   final String color;
-  final int kilometersDriven;
+
   final int expectedPrice;
   final String city;
   final String fuelType;
   final String transmission;
   final String ownership;
-  final String accidentHistory;
+
   final String description;
+  final String contactNumber;
+
   final List<SellCarImageAttachment> images;
 
   Map<String, dynamic> get carDetails => {
@@ -51,7 +53,6 @@ class SellCarEnquiryDraft {
     'year': year,
     'registrationNumber': registrationNumber,
     'color': color,
-    'mileage': kilometersDriven,
   };
 
   Map<String, dynamic> get sellingDetails => {
@@ -60,29 +61,73 @@ class SellCarEnquiryDraft {
     'fuelType': fuelType,
     'transmission': transmission,
     'ownership': ownership,
-    'kilometersDriven': kilometersDriven,
-    'accidentHistory': accidentHistory,
+    'serviceHistoryAvailable': true,
   };
+
+  Map<String, dynamic> toJson() {
+    return {
+      'enquiryId': enquiryId,
+      'contactNumber': contactNumber,
+      'description': description,
+      'carDetails': carDetails,
+      'sellingDetails': sellingDetails,
+    };
+  }
 
   SellCarEnquiryDraft copyWith({
     String? enquiryId,
+    String? make,
+    String? model,
+    int? year,
+    String? registrationNumber,
+    String? color,
+    int? expectedPrice,
+    String? city,
+    String? fuelType,
+    String? transmission,
+    String? ownership,
+    String? description,
+    String? contactNumber,
+    List<SellCarImageAttachment>? images,
   }) {
     return SellCarEnquiryDraft(
       enquiryId: enquiryId ?? this.enquiryId,
-      make: make,
-      model: model,
-      year: year,
-      registrationNumber: registrationNumber,
-      color: color,
-      kilometersDriven: kilometersDriven,
-      expectedPrice: expectedPrice,
-      city: city,
-      fuelType: fuelType,
-      transmission: transmission,
-      ownership: ownership,
-      accidentHistory: accidentHistory,
-      description: description,
-      images: images,
+      make: make ?? this.make,
+      model: model ?? this.model,
+      year: year ?? this.year,
+      registrationNumber:
+      registrationNumber ?? this.registrationNumber,
+      color: color ?? this.color,
+      expectedPrice: expectedPrice ?? this.expectedPrice,
+      city: city ?? this.city,
+      fuelType: fuelType ?? this.fuelType,
+      transmission: transmission ?? this.transmission,
+      ownership: ownership ?? this.ownership,
+      description: description ?? this.description,
+      contactNumber: contactNumber ?? this.contactNumber,
+      images: images ?? this.images,
     );
+  }
+
+  @override
+  String toString() {
+    return '''
+SellCarEnquiryDraft(
+  enquiryId: $enquiryId,
+  make: $make,
+  model: $model,
+  year: $year,
+  registrationNumber: $registrationNumber,
+  color: $color,
+  expectedPrice: $expectedPrice,
+  city: $city,
+  fuelType: $fuelType,
+  transmission: $transmission,
+  ownership: $ownership,
+  contactNumber: $contactNumber,
+  description: $description,
+  images: ${images.length}
+)
+''';
   }
 }

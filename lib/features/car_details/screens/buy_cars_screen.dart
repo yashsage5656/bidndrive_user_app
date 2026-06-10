@@ -267,6 +267,7 @@ class _BuyCarsScreenState extends State<BuyCarsScreen> {
           // Car List
           Expanded(
             child: Obx(() {
+              print("Total------${controller.filteredCars.length}");
               if (controller.isLoading.value) {
                 return Center(child: CircularProgressIndicator());
               }
